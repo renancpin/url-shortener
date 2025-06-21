@@ -5,7 +5,6 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
   UseGuards,
   Query,
 } from '@nestjs/common';
@@ -14,6 +13,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
 import { FindUsersDto } from './dto/find-users.dto';
+import { UserNotFound } from './errors/user-errors';
 
 @ApiExcludeController()
 @ApiBearerAuth()
@@ -31,7 +31,7 @@ export class UserController {
   @Get(':id')
   async findOne(@Param('id') id: string) {
     const user = await this.userService.findByUsername(id);
-    if (!user) throw new NotFoundException('Usuário não encontrado');
+    if (!user) throw new UserNotFound();
 
     return user;
   }
@@ -39,12 +39,12 @@ export class UserController {
   @Patch(':id')
   async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     const result = await this.userService.update(id, updateUserDto);
-    if (!result) throw new NotFoundException('Usuário não encontrado');
+    if (!result) throw new UserNotFound();
   }
 
   @Delete(':id')
   async remove(@Param('id') id: string) {
     const result = await this.userService.remove(id);
-    if (!result) throw new NotFoundException('Usuário não encontrado');
+    if (!result) throw new UserNotFound();
   }
 }

@@ -6,6 +6,7 @@ import {
   Min,
   Max,
   validateSync,
+  IsNotEmpty,
 } from 'class-validator';
 import { plainToClass } from 'class-transformer';
 
@@ -51,6 +52,15 @@ export class EnvironmentVariables {
 
   @IsString()
   JWT_EXPIRATION: string;
+
+  // Application
+  @IsString()
+  @IsNotEmpty()
+  HOST_URL: string;
+
+  @IsNumber()
+  @IsOptional()
+  SHORT_URL_LENGTH: number = 6;
 }
 
 export function validate(config: Record<string, unknown>) {
