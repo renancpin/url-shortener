@@ -35,6 +35,7 @@ export class UrlsService {
     const url = this.urlRepository.create({
       key,
       longUrl: createUrlDto.longUrl,
+      userId: createUrlDto.userId,
     });
 
     await this.urlRepository.save(url);
@@ -45,7 +46,9 @@ export class UrlsService {
   async findAll(queryDto: FindUrlsDto): Promise<PaginatedUrls> {
     const query = queryDto.toQuery();
     const [urls, total] = await this.urlRepository.findAndCount({
-      ...query,
+      skip: query.skip,
+      take: query.take,
+      where: query.where,
       relations: ['user'],
     });
     const response = new PaginatedUrls({
@@ -57,24 +60,35 @@ export class UrlsService {
     return response;
   }
 
-  async findOne(id: string): Promise<UrlPresenter | null> {
+  async findOne(id: string, userId: string): Promise<UrlPresenter | null> {
     const url = await this.urlRepository.findOne({
-      where: { id },
+      where: { id, userId },
       relations: ['user'],
     });
     if (!url) return null;
     return this.toUrlPresenter(url);
   }
 
-  async update(id: string, updateUrlDto: UpdateUrlDto): Promise<boolean> {
-    const result = await this.urlRepository.update({ id }, updateUrlDto);
+  async update(
+    filter: { id: string; userId: string },
+    updateUrlDto: UpdateUrlDto,
+  ): Promise<boolean> {
+    const result = await this.urlRepository.update(
+      { id: filter.id, userId: filter.userId },
+      {
+        longUrl: updateUrlDto.longUrl,
+      },
+    );
     if (!result.affected) return false;
 
     return true;
   }
 
-  async remove(id: string): Promise<boolean> {
-    const result = await this.urlRepository.softDelete({ id });
+  async remove(id: string, userId: string): Promise<boolean> {
+    const result = await this.urlRepository.softDelete({
+      id,
+      userId,
+    });
     if (!result.affected) return false;
 
     return true;
