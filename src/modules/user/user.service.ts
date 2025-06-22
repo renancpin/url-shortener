@@ -5,7 +5,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
 import { FindUsersDto } from './dto/find-users.dto';
-import { PaginatedUsers } from './dto/paginated-users.dto';
+import { PaginatedUsers } from './presenters/paginated-users.dto';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
