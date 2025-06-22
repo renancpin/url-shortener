@@ -39,5 +39,5 @@ export class Url {
 
   @ManyToOne(() => User)
   @JoinColumn({ name: 'user_id' })
-  user: User;
+  user?: User;
 }
