@@ -1,18 +1,23 @@
-import { Type } from 'class-transformer';
-import { IsOptional } from 'class-validator';
-import { PaginationDto } from 'src/shared/validators/pagination.dto';
-import { SearchDate, SearchNumber } from 'src/shared/validators/search.dto';
+import { ApiHideProperty } from '@nestjs/swagger';
+import { Allow } from 'class-validator';
+import {
+  IPaginationQuery,
+  PaginationDto,
+} from 'src/shared/validators/pagination.dto';
+
+export type UrlPaginationQuery = IPaginationQuery & {
+  where?: { userId?: string };
+};
 
 export class FindUrlsDto extends PaginationDto {
-  @Type(() => SearchNumber)
-  @IsOptional()
-  visits?: number;
+  @ApiHideProperty()
+  @Allow()
+  userId?: string;
 
-  @Type(() => SearchDate)
-  @IsOptional()
-  createdAt?: SearchDate;
-
-  @Type(() => SearchDate)
-  @IsOptional()
-  updatedAt?: SearchDate;
+  toQuery(): UrlPaginationQuery {
+    return {
+      ...super.toQuery(),
+      where: this.userId ? { userId: this.userId } : undefined,
+    };
+  }
 }
