@@ -1,0 +1,36 @@
+# Dependencies
+node_modules
+
+# Logs
+logs
+*.log
+
+# Build output
+dist
+build
+
+# Environment variables
+.env
+.env.*
+
+# Version control
+.git
+.gitignore
+
+# IDE files
+.idea
+.vscode
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage
+
+# Docker files
+Dockerfile
+docker-compose.yml
+.dockerignore 
