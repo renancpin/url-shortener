@@ -9,7 +9,6 @@ import { UpdateUrlDto } from './dto/update-url.dto';
 
 describe('UrlsController', () => {
   let controller: UrlsController;
-  let service: UrlsService;
 
   const mockUrlsService = {
     create: jest.fn(),
@@ -36,7 +35,6 @@ describe('UrlsController', () => {
     }).compile();
 
     controller = module.get<UrlsController>(UrlsController);
-    service = module.get<UrlsService>(UrlsService);
   });
 
   it('should be defined', () => {
@@ -56,7 +54,7 @@ describe('UrlsController', () => {
       const result = await controller.create(createUrlDto);
 
       expect(result).toEqual(url);
-      expect(service.create).toHaveBeenCalledWith(createUrlDto);
+      expect(mockUrlsService.create).toHaveBeenCalledWith(createUrlDto);
     });
 
     it('should create a new url with user', async () => {
@@ -71,7 +69,7 @@ describe('UrlsController', () => {
       const result = await controller.create(createUrlDto, mockUser);
 
       expect(result).toEqual(url);
-      expect(service.create).toHaveBeenCalledWith({
+      expect(mockUrlsService.create).toHaveBeenCalledWith({
         ...createUrlDto,
         userId: mockUser.id,
       });
@@ -87,7 +85,7 @@ describe('UrlsController', () => {
       const result = await controller.findAll(query, mockUser);
 
       expect(result).toEqual(paginatedUrls);
-      expect(service.findAll).toHaveBeenCalledWith({
+      expect(mockUrlsService.findAll).toHaveBeenCalledWith({
         ...query,
         userId: mockUser.id,
       });
@@ -102,7 +100,10 @@ describe('UrlsController', () => {
       const result = await controller.findOne('url-id', mockUser);
 
       expect(result).toEqual(url);
-      expect(service.findOne).toHaveBeenCalledWith('url-id', mockUser.id);
+      expect(mockUrlsService.findOne).toHaveBeenCalledWith(
+        'url-id',
+        mockUser.id,
+      );
     });
 
     it('should throw UrlNotFound if url is not found', async () => {
@@ -121,7 +122,7 @@ describe('UrlsController', () => {
 
       await controller.update('url-id', updateUrlDto, mockUser);
 
-      expect(service.update).toHaveBeenCalledWith(
+      expect(mockUrlsService.update).toHaveBeenCalledWith(
         { id: 'url-id', userId: mockUser.id },
         updateUrlDto,
       );
@@ -143,7 +144,10 @@ describe('UrlsController', () => {
 
       await controller.remove('url-id', mockUser);
 
-      expect(service.remove).toHaveBeenCalledWith('url-id', mockUser.id);
+      expect(mockUrlsService.remove).toHaveBeenCalledWith(
+        'url-id',
+        mockUser.id,
+      );
     });
 
     it('should throw UrlNotFound if url is not found', async () => {
