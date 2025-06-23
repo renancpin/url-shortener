@@ -53,6 +53,21 @@ describe('UrlsController', () => {
       };
       mockUrlsService.create.mockResolvedValue(url);
 
+      const result = await controller.create(createUrlDto);
+
+      expect(result).toEqual(url);
+      expect(service.create).toHaveBeenCalledWith(createUrlDto);
+    });
+
+    it('should create a new url with user', async () => {
+      const createUrlDto: CreateUrlDto = { longUrl: 'http://example.com' };
+      const url = {
+        id: 'url-id',
+        shortUrl: 'http://short.ly/1',
+        ...createUrlDto,
+      };
+      mockUrlsService.create.mockResolvedValue(url);
+
       const result = await controller.create(createUrlDto, mockUser);
 
       expect(result).toEqual(url);
