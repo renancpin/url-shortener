@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, Matches } from 'class-validator';
+import { IsNotEmpty, IsString } from 'class-validator';
 import { IsValidPassword } from 'src/shared/validators/validation-decorators';
 
 export class CreateUserDto {

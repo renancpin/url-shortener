@@ -3,13 +3,11 @@ import { UrlsService } from './urls.service';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Url } from './entities/url.entity';
 import { ConfigService } from '@nestjs/config';
-import { Repository } from 'typeorm';
 import { UrlAlreadyExists } from './errors/url-errors';
 import { CreateUrlDto } from './dto/create-url.dto';
 
 describe('UrlsService', () => {
   let service: UrlsService;
-  let urlRepository: Repository<Url>;
 
   const mockUrlRepository = {
     create: jest.fn(),
@@ -22,7 +20,7 @@ describe('UrlsService', () => {
   };
 
   const mockConfigService = {
-    get: jest.fn((key: string, defaultValue: any) => {
+    get: jest.fn((key: string, defaultValue: string | number) => {
       if (key === 'HOST_URL') return 'http://localhost:3000';
       if (key === 'SHORT_URL_LENGTH') return 6;
       return defaultValue;
@@ -45,7 +43,6 @@ describe('UrlsService', () => {
     }).compile();
 
     service = module.get<UrlsService>(UrlsService);
-    urlRepository = module.get<Repository<Url>>(getRepositoryToken(Url));
   });
 
   it('should be defined', () => {
@@ -98,13 +95,19 @@ describe('UrlsService', () => {
 
   describe('findAll', () => {
     it('should return a paginated list of urls', async () => {
-      const queryDto = { toQuery: () => ({ skip: 0, take: 10, where: {} }), page: 1, results: 10 };
-      const urls = [{ id: 'url-id', key: 'random', longUrl: 'http://example.com' }];
+      const queryDto = {
+        toQuery: () => ({ skip: 0, take: 10, where: {} }),
+        page: 1,
+        results: 10,
+      };
+      const urls = [
+        { id: 'url-id', key: 'random', longUrl: 'http://example.com' },
+      ];
       const total = 1;
 
       mockUrlRepository.findAndCount.mockResolvedValue([urls, total]);
 
-      const result = await service.findAll(queryDto as any);
+      const result = await service.findAll(queryDto);
 
       expect(result.data[0].longUrl).toBe(urls[0].longUrl);
       expect(result.page).toBe(queryDto.page);
@@ -121,7 +124,11 @@ describe('UrlsService', () => {
 
   describe('findOne', () => {
     it('should return a single url', async () => {
-      const url = { id: 'url-id', key: 'random', longUrl: 'http://example.com' };
+      const url = {
+        id: 'url-id',
+        key: 'random',
+        longUrl: 'http://example.com',
+      };
       mockUrlRepository.findOne.mockResolvedValue(url);
 
       const result = await service.findOne('url-id', 'user-id');

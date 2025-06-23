@@ -1,4 +1,3 @@
-import { min } from 'class-validator';
 import {
   ALPHANUM_MAX,
   getAlphanumFromIndex,

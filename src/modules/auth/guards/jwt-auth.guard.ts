@@ -13,13 +13,12 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     super();
   }
 
-  handleRequest<TUser = any>(
+  handleRequest<TUser>(
     err: any,
-    user: any,
+    user: TUser,
     _info: any,
     context: ExecutionContext,
-    _status?: any,
-  ): TUser {
+  ): TUser | null {
     if (user && !err) return user;
 
     const isOptionalAuth = this.reflector.getAllAndOverride<boolean>(
@@ -28,7 +27,7 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     );
 
     if (isOptionalAuth) {
-      return null as any;
+      return null;
     }
 
     throw err || new UnauthorizedException();

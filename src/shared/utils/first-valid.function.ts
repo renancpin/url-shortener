@@ -1,21 +1,27 @@
-export function firstValid<T, U = T>(
-  values: T[],
-  opts: { test: (_: T | U) => boolean; transform?: (_: T) => U },
-): T | U | null {
+export function firstValid<
+  V,
+  T extends (_: V) => U,
+  U = T extends (_: V) => infer U ? U : V,
+>(values: V[], opts: { test: (_: U) => boolean; transform?: T }): U | null {
   for (let i = 0; i < values.length; i++) {
-    let value: T | U = values[i];
-    if (opts.transform) value = opts.transform(value);
+    let value: U | V = values[i];
 
-    const isValid = opts.test(value);
-    if (isValid) return value;
+    if (opts.transform) {
+      value = opts.transform(values[i]);
+    }
+
+    const isValid = opts.test(value as U);
+    if (isValid) return value as U;
   }
 
   return null;
 }
 
 export function firstPositiveInt(values: any[]): number | null {
-  return firstValid(values, {
+  const validNumber = firstValid(values, {
     transform: Number,
     test: (n) => n > 0,
   });
+
+  return validNumber;
 }
