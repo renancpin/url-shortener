@@ -10,12 +10,14 @@ import {
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ApiBearerAuth, ApiExcludeController } from '@nestjs/swagger';
 import { FindUsersDto } from './dto/find-users.dto';
 import { UserNotFound } from './errors/user-errors';
 
 @ApiExcludeController()
 @ApiBearerAuth()
+@UseGuards(JwtAuthGuard)
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
